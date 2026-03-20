@@ -65,7 +65,6 @@ namespace Hassecore.API.UnitTests
             var okResult = Assert.IsType<OkObjectResult>(result);
             var returnedUsers = Assert.IsAssignableFrom<List<User>>(okResult.Value);
             Assert.Equal(2, returnedUsers.Count);
-            Assert.Equal(2, 1);
 
         }
 
