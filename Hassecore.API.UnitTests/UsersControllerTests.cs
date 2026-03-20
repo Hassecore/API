@@ -1,10 +1,10 @@
-using Hassecore.API.Business.DTOs.UserPairing;
 using Hassecore.API.Controllers;
 using Hassecore.API.Data.Context.CurrentUserContext;
 using Hassecore.API.Data.Entities.UserPairing;
 using Hassecore.API.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MockQueryable;
 using Moq;
 using System.Linq.Expressions;
 
@@ -25,63 +25,67 @@ namespace Hassecore.API.UnitTests
             _controller = new UsersController(_mockRepository.Object, _mockCurrentUserContext.Object, _mockLogger.Object);
         }
 
-        //[Fact]
-        //public async Task GetUsersAsync_ReturnsOkResult_WithListOfUsers()
-        //{
-        //    // Arrange
-        //    var users = new List<User>
-        //    {
-        //        new User 
-        //        { 
-        //            Id = Guid.NewGuid(),
-        //            ExternalId = "ext-001",
-        //            Username = "user1",
-        //            Email = "user1@example.com",
-        //            CreatedAt = DateTime.UtcNow,
-        //            UpdatedAt = DateTime.UtcNow,
-        //            LastOnline = DateOnly.FromDateTime(DateTime.UtcNow)
-        //        },
-        //        new User 
-        //        { 
-        //            Id = Guid.NewGuid(),
-        //            ExternalId = "ext-002",
-        //            Username = "user2",
-        //            Email = "user2@example.com",
-        //            CreatedAt = DateTime.UtcNow,
-        //            UpdatedAt = DateTime.UtcNow,
-        //            LastOnline = DateOnly.FromDateTime(DateTime.UtcNow)
-        //        }
-        //    }.AsQueryable();
+        [Fact]
+        public async Task GetUsersAsync_ReturnsOkResult_WithListOfUsers()
+        {
+            // Arrange
+            var users = new List<User>
+            {
+                new User
+                {
+                    Id = Guid.NewGuid(),
+                    ExternalId = "ext-001",
+                    Username = "user1",
+                    Email = "user1@example.com",
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    LastOnline = DateOnly.FromDateTime(DateTime.UtcNow)
+                },
+                new User
+                {
+                    Id = Guid.NewGuid(),
+                    ExternalId = "ext-002",
+                    Username = "user2",
+                    Email = "user2@example.com",
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    LastOnline = DateOnly.FromDateTime(DateTime.UtcNow)
+                }
+            };
 
-        //    _mockRepository.Setup(repo => repo.GetQueryable<User>(It.IsAny<Expression<Func<User, bool>>>()))
-        //        .Returns(users);
+            var mockQueryable = users.BuildMock();
 
-        //    // Act
-        //    var result = await _controller.GetUsersAsync();
+            _mockRepository.Setup(repo => repo.GetQueryable<User>(It.IsAny<Expression<Func<User, bool>>>()))
+                .Returns(mockQueryable);
 
-        //    // Assert
-        //    var okResult = Assert.IsType<OkObjectResult>(result);
-        //    var returnedUsers = Assert.IsAssignableFrom<List<User>>(okResult.Value);
-        //    Assert.Equal(2, returnedUsers.Count);
-        //}
+            // Act
+            var result = await _controller.GetUsersAsync();
 
-        //[Fact]
-        //public async Task GetUsersAsync_ReturnsEmptyList_WhenNoUsersExist()
-        //{
-        //    // Arrange
-        //    var users = new List<User>().AsQueryable();
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnedUsers = Assert.IsAssignableFrom<List<User>>(okResult.Value);
+            Assert.Equal(2, returnedUsers.Count);
 
-        //    _mockRepository.Setup(repo => repo.GetQueryable<User>(It.IsAny<Expression<Func<User, bool>>>()))
-        //        .Returns(users);
+        }
 
-        //    // Act
-        //    var result = await _controller.GetUsersAsync();
+        [Fact]
+        public async Task GetUsersAsync_ReturnsEmptyList_WhenNoUsersExist()
+        {
+            // Arrange
+            var users = new List<User>();
+            var mockQueryable = users.BuildMock();
 
-        //    // Assert
-        //    var okResult = Assert.IsType<OkObjectResult>(result);
-        //    var returnedUsers = Assert.IsAssignableFrom<List<User>>(okResult.Value);
-        //    Assert.Empty(returnedUsers);
-        //}
+            _mockRepository.Setup(repo => repo.GetQueryable<User>(It.IsAny<Expression<Func<User, bool>>>()))
+                .Returns(mockQueryable);
+
+            // Act
+            var result = await _controller.GetUsersAsync();
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnedUsers = Assert.IsAssignableFrom<List<User>>(okResult.Value);
+            Assert.Empty(returnedUsers);
+        }
 
         [Fact]
         public async Task GetUserAsync_ReturnsOkResult_WhenUserExists()
