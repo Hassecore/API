@@ -26,7 +26,7 @@ jobs:
         run: dotnet Restore
       
       - name: Build
-        run: dotnet build Hassecore.API.sln --no-build --verbosity normal
+        run: dotnet build Hassecore.API.sln --no-restore --verbosity normal
       
       - name: Run tests
         run: dotnet test Hassecore.API.sln --no-build --verbosity normal
