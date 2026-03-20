@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop, 'feature/*']
+  pull_request:
+    branches: [ main, develop, 'feature/*']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Check out repository
+        uses: actions/checkout@v4
+      
+      - name: Show files
+        run: ls -la
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with: 
+          dotnet-version: 8.0.x
+      
+      - name: Restore dependencies
+        run: dotnet Restore
+      
+      - name: Build
+        run: dotnet build Hassecore.API.sln --no-build --verbosity normal
+      
+      - name: Run tests
+        run: dotnet test Hassecore.API.sln --no-build --verbosity normal
