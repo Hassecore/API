@@ -23,7 +23,7 @@ jobs:
           dotnet-version: 8.0.x
       
       - name: Restore dependencies
-        run: dotnet Restore
+        run: dotnet restore Hassecore.API.sln
       
       - name: Build
         run: dotnet build Hassecore.API.sln --no-restore --verbosity normal
