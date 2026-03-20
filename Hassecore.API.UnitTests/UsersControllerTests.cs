@@ -1,10 +1,10 @@
-using Hassecore.API.Business.DTOs.UserPairing;
 using Hassecore.API.Controllers;
 using Hassecore.API.Data.Context.CurrentUserContext;
 using Hassecore.API.Data.Entities.UserPairing;
 using Hassecore.API.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MockQueryable;
 using Moq;
 using System.Linq.Expressions;
 
@@ -51,10 +51,12 @@ namespace Hassecore.API.UnitTests
                     UpdatedAt = DateTime.UtcNow,
                     LastOnline = DateOnly.FromDateTime(DateTime.UtcNow)
                 }
-            }.AsQueryable();
+            };
+
+            var mockQueryable = users.BuildMock();
 
             _mockRepository.Setup(repo => repo.GetQueryable<User>(It.IsAny<Expression<Func<User, bool>>>()))
-                .Returns(users);
+                .Returns(mockQueryable);
 
             // Act
             var result = await _controller.GetUsersAsync();
@@ -69,10 +71,11 @@ namespace Hassecore.API.UnitTests
         public async Task GetUsersAsync_ReturnsEmptyList_WhenNoUsersExist()
         {
             // Arrange
-            var users = new List<User>().AsQueryable();
+            var users = new List<User>();
+            var mockQueryable = users.BuildMock();
 
             _mockRepository.Setup(repo => repo.GetQueryable<User>(It.IsAny<Expression<Func<User, bool>>>()))
-                .Returns(users);
+                .Returns(mockQueryable);
 
             // Act
             var result = await _controller.GetUsersAsync();
